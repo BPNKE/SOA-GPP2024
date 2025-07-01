@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Keluasan Pejabat (GPP 2024)</title>
+<style>
+  /* --- Gaya biasa (sedia ada) --- */
+  body { font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+  h2 { color: #004080; }
+  label { display: block; margin-top: 10px; }
+  input[type="checkbox"], input[type="radio"] { margin-right: 10px; }
+  input, select { padding: 5px; margin-top: 5px; }
+  .section-title { margin-top: 20px; font-weight: bold; color: #333; }
+  table { margin-top: 20px; width: 100%; border-collapse: collapse; }
+  table, th, td { border: 1px solid #999; }
+  th, td { padding: 10px; text-align: left; }
+  .highlight-warning { background-color: #ffdddd; color: #b30000; font-weight: bold; }
+  button { margin-top: 15px; padding: 8px 15px; background: #004080; color: #fff; border: none; cursor: pointer; border-radius: 5px; }
+  button:hover { background-color: #0066cc; }
+
+  /* --- Gaya semasa cetak --- */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #printable, #printable * {
+      visibility: visible;
+    }
+    #printable {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+    button {
+      display: none;
+    }
+  }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+<h2>Kalkulator Keluasan Pejabat (GPP 2024)</h2>
+
+
+
+<!-- 1A -->
+<div class="section-title">1A. Staf Bilik Individu</div>
+<div id="individualStaff">
+  <label>Menteri / Timbalan Menteri: <input type="number" id="b_menteri" value="0"></label>
+  <label>JUSA A: <input type="number" id="b_jusaa" value="0"></label>
+  <label>JUSA B: <input type="number" id="b_jusab" value="0"></label>
+  <label>JUSA C: <input type="number" id="b_jusac" value="0"></label>
+  <label>Gred 53–54: <input type="number" id="b_gred5354" value="0"></label>
+  <label>Gred 47–52: <input type="number" id="b_gred4752" value="0"></label>
+  <label>Gred 41–46: <input type="number" id="b_gred4146" value="0"></label>
+  <label>Gred 36–40: <input type="number" id="b_gred3640" value="0"></label>
+  <label>Gred 1–35: <input type="number" id="b_gred135" value="0"></label>
+</div>
+
+<!-- 1B -->
+<div class="section-title">1B. Staf Open Plan</div>
+<div id="openPlanStaff">
+  <label>Gred 53–54: <input type="number" id="gred5354" value="0"></label>
+  <label>Gred 47–52: <input type="number" id="gred4752" value="0"></label>
+  <label>Gred 41–46: <input type="number" id="gred4146" value="0"></label>
+  <label>Gred 36–40: <input type="number" id="gred3640" value="0"></label>
+  <label>Gred 1–35: <input type="number" id="gred135" value="0"></label>
+</div>
+
+<!-- 2.1 -->
+<div class="section-title">2.1 Ruang Berdasarkan Jumlah Pegawai</div>
+<label><input type="checkbox" value="rehatpantri"> Bilik Rehat / Pantri</label>
+<label><input type="checkbox" value="tandas"> Tandas</label>
+
+<!-- 2.2 -->
+<div class="section-title">2.2 Ruang Berdasarkan Peratus Pegawai</div>
+<label><input type="checkbox" value="sumber"> Bilik Sumber / Bacaan</label>
+<label><input type="checkbox" value="kafetaria"> Kafetaria</label>
+<label><input type="checkbox" value="surau"> Bilik Solat</label>
+
+<!-- 2.3 -->
+<div class="section-title">2.3 Berdasarkan Bilangan Bilik</div>
+<label><input type="checkbox" value="janitor"> Stor Janitor</label> <input type="number" id="bil_janitor" value="0">
+<label><input type="checkbox" value="fail"> Bilik Fail</label> <input type="number" id="bil_fail" value="0">
+<label><input type="checkbox" value="kebal"> Bilik Kebal</label> <input type="number" id="bil_kebal" value="0">
+<label><input type="checkbox" value="stor"> Stor-Stor</label> <input type="number" id="bil_stor" value="0">
+<label><input type="checkbox" value="tetamu"> Ruang Tetamu</label> <input type="number" id="bil_tetamu" value="0">
+<label><input type="checkbox" value="rekreasi"> Bilik Rekreasi</label> <input type="number" id="bil_rekreasi" value="0">
+
+
+<!-- 2.4 -->
+<div class="section-title">2.4 Berdasarkan Bilangan Pegawai</div>
+<label><input type="checkbox" value="kaunter"> Kaunter</label> <input type="number" id="bil_kaunter" value="0">
+<label><input type="checkbox" value="menunggu"> Menunggu</label> <input type="number" id="bil_menunggu" value="0">
+<label><input type="checkbox" value="seminar"> Seminar</label> <input type="number" id="bil_seminar" value="0">
+<label><input type="checkbox" value="mesyuarat"> Bilik Mesyuarat</label> <input type="number" id="bil_mesyuarat" value="0">
+<label><input type="checkbox" value="galeri"> Ruang Galeri</label> <input type="number" id="bil_galeri" value="0">
+
+<!-- 3.0 -->
+<div class="section-title">3.0 Tambahan</div>
+<label><input type="checkbox" id="add_circulation" checked> Sirkulasi (25%)</label>
+<label><input type="checkbox" id="add_services" checked> Servis (10%)</label>
+<label>Custom (%): <input type="number" id="custom_percent" value="0" min="0" max="100"></label>
+
+<!-- 4.0 -->
+<div class="section-title">4.0 Jumlah Keseluruhan Staf</div>
+<p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
+
+
+<!-- Jadual SOA -->
+<div id="printable">
+  <div class="section-title">5.0 Jadual SOA</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Ruang</th>
+        <th>Bilangan</th>
+        <th>Pekali (m²)</th>
+        <th>Keluasan (m²)</th>
+      </tr>
+    </thead>
+    <tbody id="soaBody">
+      <tr><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"><strong>Jumlah Keluasan</strong></td>
+        <td id="totalSOA">0.00 m²</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+
+<!-- Cetak -->
+
+<button onclick="window.print()">Cetak Laporan</button>
+
+<script>
+function calculateTotalStaff() {
+  let total = 0;
+  document.querySelectorAll('#individualStaff input, #openPlanStaff input').forEach(input => {
+    total += parseInt(input.value || 0);
+  });
+  return total;
+}
+
+function updateSOA() {
+  const totalStaff = calculateTotalStaff();
+  document.getElementById("totalStaff").textContent = totalStaff;
+  const soaData = [];
+  let total = 0;
+
+  const addData = (id, label, size) => {
+    const count = parseInt(document.getElementById(id).value || 0);
+    if (count > 0) {
+      const area = count * size;
+      soaData.push([label, count, size, area]);
+      total += area;
+    }
+  };
+
+  [['b_menteri','1A - Menteri',100],['b_jusaa','1A - JUSA A',36],['b_jusab','1A - JUSA B',30],
+   ['b_jusac','1A - JUSA C',30],['b_gred5354','1A - Gred 53–54',16],['b_gred4752','1A - Gred 47–52',14],
+   ['b_gred4146','1A - Gred 41–46',12],['b_gred3640','1A - Gred 36–40',8],['b_gred135','1A - Gred 1–35',4],
+   ['gred5354','1B - Gred 53–54',16],['gred4752','1B - Gred 47–52',14],['gred4146','1B - Gred 41–46',12],
+   ['gred3640','1B - Gred 36–40',8],['gred135','1B - Gred 1–35',4]]
+  .forEach(([id, label, size]) => addData(id, label, size));
+
+  if (document.querySelector('input[value="rehatpantri"]').checked) {
+    const a = totalStaff * 1.8;
+    soaData.push(['2.1 - Rehat / Pantri', totalStaff, 1.8, a]);
+    total += a;
+  }
+if (document.querySelector('input[value="tandas"]').checked) {
+  const a = totalStaff * 0.05 * 3.5;
+  soaData.push(['2.1 - Tandas (5% x 3.5 m²)', (totalStaff * 0.05).toFixed(1), 3.5, a]);
+  total += a;
+}
+
+
+if (document.querySelector('input[value="sumber"]').checked) {
+  const count = totalStaff * 0.1;
+  const area = count * 1.9;
+  soaData.push(['2.2 - Bilik Sumber (10% x 1.9 m²)', count.toFixed(1), 1.9, area]);
+  total += area;
+}
+  if (document.querySelector('input[value="kafetaria"]').checked) {
+    const a = totalStaff * 0.3 * 2.0;
+    soaData.push(['2.2 - Kafetaria', (totalStaff * 0.3).toFixed(1), 2.0, a]);
+    total += a;
+  }
+if (document.querySelector('input[value="surau"]').checked) {
+  const count = totalStaff * 0.2;
+  const area = count * 1.4;
+  soaData.push(['2.2 - Bilik Solat (20% x 1.4 m²)', count.toFixed(1), 1.4, area]);
+  total += area;
+}
+
+
+  [['janitor','2.3 - Stor Janitor',3],['fail','2.3 - Bilik Fail',20],['kebal','2.3 - Bilik Kebal',10],
+   ['stor','2.3 - Stor-Stor',3],['tetamu','2.3 - Ruang Tetamu',20]]
+  .forEach(([val,label,size]) => {
+    if (document.querySelector(`input[value="${val}"]`).checked) {
+      const bil = parseInt(document.getElementById(`bil_${val}`).value || 0);
+      const area = bil * size;
+      soaData.push([label, bil, size, area]);
+      total += area;
+    }
+  });
+
+[['kaunter','2.4 - Kaunter',4],['menunggu','2.4 - Menunggu',1.4],['seminar','2.4 - Seminar',4],['mesyuarat','2.4 - Bilik Mesyuarat',1.6], ['galeri','2.4 - Ruang Galeri',2.0]]
+  .forEach(([val,label,size]) => {
+    if (document.querySelector(`input[value="${val}"]`).checked) {
+      const bil = parseInt(document.getElementById(`bil_${val}`).value || 0);
+      const area = bil * size;
+      soaData.push([label, bil, size, area]);
+      total += area;
+    }
+  });
+
+  const tbody = document.getElementById("soaBody");
+  tbody.innerHTML = "";
+  if (soaData.length === 0) {
+    tbody.innerHTML = `<tr><td>—</td><td>—</td><td>—</td><td>—</td></tr>`;
+  } else {
+    soaData.forEach(([label, bil, pekali, luas]) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${label}</td><td>${bil}</td><td>${pekali}</td><td>${luas.toFixed(2)}</td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  const circulation = document.getElementById('add_circulation').checked ? total * 0.25 : 0;
+  const services = document.getElementById('add_services').checked ? total * 0.10 : 0;
+  const customPercent = parseFloat(document.getElementById('custom_percent').value || 0);
+  const custom = (!isNaN(customPercent) && customPercent > 0) ? total * (customPercent / 100) : 0;
+
+  if (circulation > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${circulation.toFixed(2)}</td></tr>`;
+  if (services > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${services.toFixed(2)}</td></tr>`;
+  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Custom (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
+
+  const finalTotal = total + circulation + services + custom;
+  const totalElement = document.getElementById("totalSOA");
+  totalElement.textContent = finalTotal.toFixed(2) + " m²";
+  totalElement.classList.toggle("highlight-warning", finalTotal > 2000);
+}
+
+document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('input', updateSOA);
+  input.addEventListener('change', updateSOA);
+});
+window.onload = updateSOA;
+
+
+</script>
+
+</body>
+</html>
