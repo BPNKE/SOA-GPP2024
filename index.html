@@ -3,49 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Kalkulator Keluasan Pejabat (GPP 2024)</title>
-<style>
-  /* --- Gaya biasa (sedia ada) --- */
-  body { font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
-  h2 { color: #004080; }
-  label { display: block; margin-top: 10px; }
-  input[type="checkbox"], input[type="radio"] { margin-right: 10px; }
-  input, select { padding: 5px; margin-top: 5px; }
-  .section-title { margin-top: 20px; font-weight: bold; color: #333; }
-  table { margin-top: 20px; width: 100%; border-collapse: collapse; }
-  table, th, td { border: 1px solid #999; }
-  th, td { padding: 10px; text-align: left; }
-  .highlight-warning { background-color: #ffdddd; color: #b30000; font-weight: bold; }
-  button { margin-top: 15px; padding: 8px 15px; background: #004080; color: #fff; border: none; cursor: pointer; border-radius: 5px; }
-  button:hover { background-color: #0066cc; }
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+    h2 { color: #004080; }
+    label { display: block; margin-top: 10px; }
+    input[type="checkbox"], input[type="radio"] { margin-right: 10px; }
+    input, select { padding: 5px; margin-top: 5px; }
+    .section-title { margin-top: 20px; font-weight: bold; color: #333; }
+    table { margin-top: 20px; width: 100%; border-collapse: collapse; }
+    table, th, td { border: 1px solid #999; }
+    th, td { padding: 10px; text-align: left; }
+    .highlight-warning { background-color: #ffdddd; color: #b30000; font-weight: bold; }
+    button { margin-top: 15px; padding: 8px 15px; background: #004080; color: #fff; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background-color: #0066cc; }
+    #customWarning { display: none; }
 
-  /* --- Gaya semasa cetak --- */
-  @media print {
-    body * {
-      visibility: hidden;
+    @media print {
+      body * { visibility: hidden; }
+      #printable, #printable * { visibility: visible; }
+      #printable { position: absolute; top: 0; left: 0; width: 100%; }
+      button { display: none; }
     }
-    #printable, #printable * {
-      visibility: visible;
-    }
-    #printable {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-    }
-    button {
-      display: none;
-    }
-  }
-
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
 <h2>Kalkulator Keluasan Pejabat (GPP 2024)</h2>
-
-
 
 <!-- 1A -->
 <div class="section-title">1A. Staf Bilik Individu</div>
@@ -100,19 +85,31 @@
 <label><input type="checkbox" value="mesyuarat"> Bilik Mesyuarat</label> <input type="number" id="bil_mesyuarat" value="0">
 <label><input type="checkbox" value="galeri"> Ruang Galeri</label> <input type="number" id="bil_galeri" value="0">
 
-<!-- 3.0 -->
-<div class="section-title">3.0 Tambahan</div>
-<label><input type="checkbox" id="add_circulation" checked> Sirkulasi (25%)</label>
-<label><input type="checkbox" id="add_services" checked> Servis (10%)</label>
-<label>Custom (%): <input type="number" id="custom_percent" value="0" min="0" max="100"></label>
+<!-- 3.0 Tambahan -->
+<div class="section-title">3.0 Ruang Sirkulasi & Servis</div>
+
+<!-- Hidden checkboxes for logic -->
+<input type="checkbox" id="add_circulation" checked style="display:none;">
+<input type="checkbox" id="add_services" checked style="display:none;">
+
+<label><input type="radio" name="circulationOption" id="radio_default" checked onchange="handleCirculationToggle()"> 
+  Sirkulasi (25%) + Servis (10%)</label>
+<label>
+  <input type="radio" name="circulationOption" id="radio_custom" onchange="handleCirculationToggle()"> 
+  Custom (%): 
+  <input type="number" id="custom_percent" value="0" min="0" max="100" disabled oninput="handleCustomInput()" />
+</label>
 
 <!-- 4.0 -->
 <div id="printable">
-<div class="section-title">4.0 Jumlah Keseluruhan Staf</div>
-<p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
+<!-- Warning -->
+<p id="customWarning" class="highlight-warning" style="display: none;">
+  ⚠️ Amaran: Jumlah peratusan sirkulasi + servis melebihi 35%!
+</p>
+  <div class="section-title">4.0 Jumlah Keseluruhan Staf</div>
+  <p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
 
-
-<!-- Jadual SOA -->
+  <!-- Jadual SOA -->
   <div class="section-title">5.0 Jadual SOA</div>
   <table>
     <thead>
@@ -135,12 +132,72 @@
   </table>
 </div>
 
-
-<!-- Cetak -->
-
+<!-- Buttons -->
 <button onclick="window.print()">Cetak Laporan</button>
+<button onclick="downloadPDF()">Muat Turun PDF</button>
 
 <script>
+function handleCustomInput() {
+  const val = parseFloat(document.getElementById('custom_percent').value || 0);
+  if (val > 0) {
+    document.getElementById('add_circulation').checked = false;
+    document.getElementById('add_services').checked = false;
+  }
+  updateSOA();
+}
+
+function handleDefaultCheck() {
+  const isDefaultChecked = document.getElementById('add_circulation').checked || document.getElementById('add_services').checked;
+  if (isDefaultChecked) {
+    document.getElementById('custom_percent').value = 0;
+  }
+  updateSOA();
+}
+
+
+function disableDefault() {
+  const val = parseFloat(document.getElementById('custom_percent').value || 0);
+  if (val > 0) {
+    document.getElementById('add_circulation').checked = false;
+    document.getElementById('add_services').checked = false;
+  }
+  updateSOA();
+}
+function handleCirculationToggle() {
+  const isCustom = document.getElementById("radio_custom").checked;
+  const customInput = document.getElementById("custom_percent");
+  const circCheckbox = document.getElementById("add_circulation");
+  const servCheckbox = document.getElementById("add_services");
+
+  if (isCustom) {
+    customInput.disabled = false;
+    circCheckbox.checked = false;
+    servCheckbox.checked = false;
+  } else {
+    customInput.value = 0;
+    customInput.disabled = true;
+    circCheckbox.checked = true;
+    servCheckbox.checked = true;
+    document.getElementById("customWarning").style.display = 'none';
+  }
+  updateSOA();
+}
+
+function handleCustomInput() {
+  const val = parseFloat(document.getElementById('custom_percent').value || 0);
+  const warning = document.getElementById("customWarning");
+  warning.style.display = val > 35 ? "block" : "none";
+  updateSOA();
+}
+
+
+
+
+
+
+
+
+
 function calculateTotalStaff() {
   let total = 0;
   document.querySelectorAll('#individualStaff input, #openPlanStaff input').forEach(input => {
@@ -176,31 +233,28 @@ function updateSOA() {
     soaData.push(['2.1 - Rehat / Pantri', totalStaff, 1.8, a]);
     total += a;
   }
-if (document.querySelector('input[value="tandas"]').checked) {
-  const a = totalStaff * 0.05 * 3.5;
-  soaData.push(['2.1 - Tandas (5% x 3.5 m²)', (totalStaff * 0.05).toFixed(1), 3.5, a]);
-  total += a;
-}
-
-
-if (document.querySelector('input[value="sumber"]').checked) {
-  const count = totalStaff * 0.1;
-  const area = count * 1.9;
-  soaData.push(['2.2 - Bilik Sumber (10% x 1.9 m²)', count.toFixed(1), 1.9, area]);
-  total += area;
-}
+  if (document.querySelector('input[value="tandas"]').checked) {
+    const a = totalStaff * 0.05 * 3.5;
+    soaData.push(['2.1 - Tandas (5% x 3.5 m²)', (totalStaff * 0.05).toFixed(1), 3.5, a]);
+    total += a;
+  }
+  if (document.querySelector('input[value="sumber"]').checked) {
+    const count = totalStaff * 0.1;
+    const area = count * 1.9;
+    soaData.push(['2.2 - Bilik Sumber (10% x 1.9 m²)', count.toFixed(1), 1.9, area]);
+    total += area;
+  }
   if (document.querySelector('input[value="kafetaria"]').checked) {
     const a = totalStaff * 0.3 * 2.0;
     soaData.push(['2.2 - Kafetaria', (totalStaff * 0.3).toFixed(1), 2.0, a]);
     total += a;
   }
-if (document.querySelector('input[value="surau"]').checked) {
-  const count = totalStaff * 0.2;
-  const area = count * 1.4;
-  soaData.push(['2.2 - Bilik Solat (20% x 1.4 m²)', count.toFixed(1), 1.4, area]);
-  total += area;
-}
-
+  if (document.querySelector('input[value="surau"]').checked) {
+    const count = totalStaff * 0.2;
+    const area = count * 1.4;
+    soaData.push(['2.2 - Bilik Solat (20% x 1.4 m²)', count.toFixed(1), 1.4, area]);
+    total += area;
+  }
 
   [['janitor','2.3 - Stor Janitor',3],['fail','2.3 - Bilik Fail',20],['kebal','2.3 - Bilik Kebal',10],
    ['stor','2.3 - Stor-Stor',3],['tetamu','2.3 - Ruang Tetamu',20]]
@@ -213,7 +267,8 @@ if (document.querySelector('input[value="surau"]').checked) {
     }
   });
 
-[['kaunter','2.4 - Kaunter',4],['menunggu','2.4 - Menunggu',1.4],['seminar','2.4 - Seminar',4],['mesyuarat','2.4 - Bilik Mesyuarat',1.6], ['galeri','2.4 - Ruang Galeri',2.0]]
+  [['kaunter','2.4 - Kaunter',4],['menunggu','2.4 - Menunggu',1.4],['seminar','2.4 - Seminar',4],
+   ['mesyuarat','2.4 - Bilik Mesyuarat',1.6], ['galeri','2.4 - Ruang Galeri',2.0]]
   .forEach(([val,label,size]) => {
     if (document.querySelector(`input[value="${val}"]`).checked) {
       const bil = parseInt(document.getElementById(`bil_${val}`).value || 0);
@@ -225,29 +280,49 @@ if (document.querySelector('input[value="surau"]').checked) {
 
   const tbody = document.getElementById("soaBody");
   tbody.innerHTML = "";
-  if (soaData.length === 0) {
-    tbody.innerHTML = `<tr><td>—</td><td>—</td><td>—</td><td>—</td></tr>`;
-  } else {
-    soaData.forEach(([label, bil, pekali, luas]) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${label}</td><td>${bil}</td><td>${pekali}</td><td>${luas.toFixed(2)}</td>`;
-      tbody.appendChild(row);
-    });
-  }
 
-  const circulation = document.getElementById('add_circulation').checked ? total * 0.25 : 0;
-  const services = document.getElementById('add_services').checked ? total * 0.10 : 0;
+  soaData.forEach(([label, bil, pekali, luas]) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${label}</td><td>${bil}</td><td>${pekali}</td><td>${luas.toFixed(2)}</td>`;
+    tbody.appendChild(row);
+  });
+
+  let extra = 0;
   const customPercent = parseFloat(document.getElementById('custom_percent').value || 0);
   const custom = (!isNaN(customPercent) && customPercent > 0) ? total * (customPercent / 100) : 0;
 
-  if (circulation > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${circulation.toFixed(2)}</td></tr>`;
-  if (services > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${services.toFixed(2)}</td></tr>`;
+  const warning = document.getElementById("customWarning");
+  warning.style.display = customPercent > 35 ? "block" : "none";
+
+  const addCirc = document.getElementById('add_circulation').checked ? total * 0.25 : 0;
+  const addServ = document.getElementById('add_services').checked ? total * 0.10 : 0;
+
+  if (addCirc > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${addCirc.toFixed(2)}</td></tr>`;
+  if (addServ > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${addServ.toFixed(2)}</td></tr>`;
   if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Custom (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
 
-  const finalTotal = total + circulation + services + custom;
-  const totalElement = document.getElementById("totalSOA");
-  totalElement.textContent = finalTotal.toFixed(2) + " m²";
-  totalElement.classList.toggle("highlight-warning", finalTotal > 2000);
+  const finalTotal = total + addCirc + addServ + custom;
+  document.getElementById("totalSOA").textContent = finalTotal.toFixed(2) + " m²";
+  document.getElementById("totalSOA").classList.toggle("highlight-warning", finalTotal > 2000);
+}
+
+async function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const element = document.getElementById("printable");
+  const canvas = await html2canvas(element, { scale: 3, useCORS: true });
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgWidth = pageWidth - 20;
+  const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+  pdf.setFontSize(12);
+  pdf.text("Kalkulator Keluasan Pejabat", 10, 10);
+  pdf.addImage(imgData, "PNG", 10, 15, imgWidth, imgHeight);
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
+  pdf.save(`kiraan_pejabat_${dateStr}.pdf`);
 }
 
 document.querySelectorAll('input').forEach(input => {
@@ -255,8 +330,6 @@ document.querySelectorAll('input').forEach(input => {
   input.addEventListener('change', updateSOA);
 });
 window.onload = updateSOA;
-
-
 </script>
 
 </body>
