@@ -299,7 +299,7 @@ function updateSOA() {
 
   if (addCirc > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${addCirc.toFixed(2)}</td></tr>`;
   if (addServ > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${addServ.toFixed(2)}</td></tr>`;
-  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Custom (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
+  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Tambahan Custom Sirkulasi + Servis (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
 
   const finalTotal = total + addCirc + addServ + custom;
   document.getElementById("totalSOA").textContent = finalTotal.toFixed(2) + " m²";
