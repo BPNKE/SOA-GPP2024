@@ -51,12 +51,12 @@
 </head>
 <body>
 
-<h2>Kalkulator Keluasan Pejabat (GPP 2024)</h2>
+<h2 style="color: black; font-family: Arial;">Kalkulator Keluasan Pejabat (GPP 2024)</h2>
 
 <!-- 1A -->
-<div class="section-title">1A. Staf Bilik Individu</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">1A. Staf Bilik Individu</div>
 <div class="input-grid" id="individualStaff">
-  <label><span>Menteri / Timbalan Menteri:</span> <input type="number" id="b_menteri" value="0"></label>
+  <label><span style="">Menteri / Timbalan Menteri:</span> <input type="number" id="b_menteri" value="0"></label>
   <label><span>JUSA A:</span> <input type="number" id="b_jusaa" value="0"></label>
   <label><span>JUSA B:</span> <input type="number" id="b_jusab" value="0"></label>
   <label><span>JUSA C:</span> <input type="number" id="b_jusac" value="0"></label>
@@ -68,7 +68,7 @@
 </div>
 
 <!-- 1B -->
-<div class="section-title">1B. Staf Open Plan</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">1B. Staf Open Plan</div>
 <div class="input-grid" id="openPlanStaff">
   <label><span>Gred 53–54 (Gred 14):</span> <input type="number" id="gred5354" value="0"></label>
   <label><span>Gred 47–52 (Gred 12–13):</span> <input type="number" id="gred4752" value="0"></label>
@@ -78,14 +78,14 @@
 </div>
 
 <!-- 2.1 -->
-<div class="section-title">2.1 Ruang Berdasarkan Jumlah Pegawai</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.1 Ruang Berdasarkan Jumlah Pegawai</div>
 <div class="input-grid">
   <label><span><input type="checkbox" value="rehatpantri"> Bilik Rehat / Pantri</span></label>
   <label><span><input type="checkbox" value="tandas"> Tandas</span></label>
 </div>
 
 <!-- 2.2 -->
-<div class="section-title">2.2 Ruang Berdasarkan Peratus Pegawai</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.2 Ruang Berdasarkan Peratus Pegawai</div>
 <div class="input-grid">
   <label><span><input type="checkbox" value="sumber"> Bilik Sumber / Bacaan</span></label>
   <label><span><input type="checkbox" value="kafetaria"> Kafetaria</span></label>
@@ -93,7 +93,7 @@
 </div>
 
 <!-- 2.3 -->
-<div class="section-title">2.3 Berdasarkan Bilangan Bilik</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.3 Berdasarkan Bilangan Bilik</div>
 <div class="input-grid">
   <label><span><input type="checkbox" value="janitor"> Stor Janitor</span> <input type="number" id="bil_janitor" value="0"></label>
   <label><span><input type="checkbox" value="fail"> Bilik Fail</span> <input type="number" id="bil_fail" value="0"></label>
@@ -104,7 +104,7 @@
 </div>
 
 <!-- 2.4 -->
-<div class="section-title">2.4 Berdasarkan Bilangan Pegawai</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.4 Berdasarkan Bilangan Pegawai</div>
 <div class="input-grid">
   <label><span><input type="checkbox" value="kaunter"> Kaunter</span> <input type="number" id="bil_kaunter" value="0"></label>
   <label><span><input type="checkbox" value="menunggu"> Menunggu</span> <input type="number" id="bil_menunggu" value="0"></label>
@@ -114,16 +114,30 @@
 </div>
 
 
-<!-- 3.0 -->
-<div class="section-title">3.0 Ruang Sirkulasi & Servis</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">3.0 Ruang Sirkulasi dan Servis</div>
 <div class="input-grid">
-  <label><input type="radio" name="circulationOption" id="radio_default" checked onchange="handleCirculationToggle()"> <span>Sirkulasi (25%) + Servis (10%)</span></label>
-  <label>
-    <input type="radio" name="circulationOption" id="radio_custom" onchange="handleCirculationToggle()">
-    <span>Custom (%):</span>
-    <input type="number" id="custom_percent" value="0" min="0" max="100" disabled oninput="handleCustomInput()">
+  <label for="radio_default">
+    <input type="radio" name="circulationOption" id="radio_default" checked onchange="handleCirculationToggle()">
+    <span style="text-align: left;">Sirkulasi (25%) + Servis (10%)</span>
   </label>
+
+  <label for="radio_custom">
+    <input type="radio" name="circulationOption" id="radio_custom" onchange="handleCirculationToggle()">
+    <span style="text-align: left;">Ruang Sirkulasi dan Servis Manual</span>
+  </label>
+
+  <input
+    type="number"
+    id="custom_percent"
+    value="0"
+    min="0"
+    max="100"
+    disabled
+    oninput="handleCustomInput()"
+    aria-label="Persentase manual untuk ruang sirkulasi dan servis"
+  >
 </div>
+
 
 <!-- Hidden checkboxes for logic -->
 <input type="checkbox" id="add_circulation" checked style="display:none;">
@@ -134,10 +148,10 @@
   ⚠️ Amaran: Jumlah peratusan sirkulasi + servis melebihi 35%!
 </p>
 
-<div class="section-title">4.0 Jumlah Keseluruhan Staf</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">4.0 Jumlah Keseluruhan Staf</div>
 <p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
 
-<div class="section-title">5.0 Jadual SOA</div>
+<div class="section-title" style="background-color: rgb(150, 207, 243);">5.0 Jadual SOA</div>
 <div id="printable">
   <table>
     <thead>
@@ -330,7 +344,7 @@ function updateSOA() {
 
   if (addCirc > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${addCirc.toFixed(2)}</td></tr>`;
   if (addServ > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${addServ.toFixed(2)}</td></tr>`;
-  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Custom (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
+  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Ruang Sirkulasi dan Servis Manual  (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
 
   const finalTotal = total + addCirc + addServ + custom;
   document.getElementById("totalSOA").textContent = finalTotal.toFixed(2) + " m²";
@@ -366,3 +380,5 @@ window.onload = updateSOA;
 </body>
 </html>
 
+
+    
