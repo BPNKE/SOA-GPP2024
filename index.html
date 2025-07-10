@@ -35,25 +35,25 @@
 <!-- 1A -->
 <div class="section-title">1A. Staf Bilik Individu</div>
 <div id="individualStaff">
-  <label>Menteri / Timbalan Menteri: <input type="number" id="b_menteri" value="0"></label>
-  <label>JUSA A: <input type="number" id="b_jusaa" value="0"></label>
-  <label>JUSA B: <input type="number" id="b_jusab" value="0"></label>
-  <label>JUSA C: <input type="number" id="b_jusac" value="0"></label>
-  <label>Gred 53–54: <input type="number" id="b_gred5354" value="0"></label>
-  <label>Gred 47–52: <input type="number" id="b_gred4752" value="0"></label>
-  <label>Gred 41–46: <input type="number" id="b_gred4146" value="0"></label>
-  <label>Gred 36–40: <input type="number" id="b_gred3640" value="0"></label>
-  <label>Gred 1–35: <input type="number" id="b_gred135" value="0"></label>
+<label>Menteri / Timbalan Menteri: <input type="number" id="b_menteri" value="0"></label>
+<label>JUSA A : <input type="number" id="b_jusaa" value="0"></label>
+<label>JUSA B : <input type="number" id="b_jusab" value="0"></label>
+<label>JUSA C : <input type="number" id="b_jusac" value="0"></label>
+<label>Gred 53–54 (Gred 14): <input type="number" id="b_gred5354" value="0"></label>
+<label>Gred 47–52 (Gred 12–13): <input type="number" id="b_gred4752" value="0"></label>
+<label>Gred 41–46 (Gred 9–11): <input type="number" id="b_gred4146" value="0"></label>
+<label>Gred 36–40 (Gred 7–8): <input type="number" id="b_gred3640" value="0"></label>
+<label>Gred 1–35 (Gred 1–6): <input type="number" id="b_gred135" value="0"></label>
 </div>
 
 <!-- 1B -->
 <div class="section-title">1B. Staf Open Plan</div>
 <div id="openPlanStaff">
-  <label>Gred 53–54: <input type="number" id="gred5354" value="0"></label>
-  <label>Gred 47–52: <input type="number" id="gred4752" value="0"></label>
-  <label>Gred 41–46: <input type="number" id="gred4146" value="0"></label>
-  <label>Gred 36–40: <input type="number" id="gred3640" value="0"></label>
-  <label>Gred 1–35: <input type="number" id="gred135" value="0"></label>
+<label>Gred 53–54 (Gred 14): <input type="number" id="gred5354" value="0"></label>
+<label>Gred 47–52 (Gred 12–13): <input type="number" id="gred4752" value="0"></label>
+<label>Gred 41–46 (Gred 9–11): <input type="number" id="gred4146" value="0"></label>
+<label>Gred 36–40 (Gred 7–8): <input type="number" id="gred3640" value="0"></label>
+<label>Gred 1–35 (Gred 1–6): <input type="number" id="gred135" value="0"></label>
 </div>
 
 <!-- 2.1 -->
@@ -221,11 +221,20 @@ function updateSOA() {
     }
   };
 
-  [['b_menteri','1A - Menteri',100],['b_jusaa','1A - JUSA A',36],['b_jusab','1A - JUSA B',30],
-   ['b_jusac','1A - JUSA C',30],['b_gred5354','1A - Gred 53–54',16],['b_gred4752','1A - Gred 47–52',14],
-   ['b_gred4146','1A - Gred 41–46',12],['b_gred3640','1A - Gred 36–40',8],['b_gred135','1A - Gred 1–35',4],
-   ['gred5354','1B - Gred 53–54',16],['gred4752','1B - Gred 47–52',14],['gred4146','1B - Gred 41–46',12],
-   ['gred3640','1B - Gred 36–40',8],['gred135','1B - Gred 1–35',4]]
+[['b_menteri','1A - Menteri / Timbalan Menteri',100],
+ ['b_jusaa','1A - JUSA A ',36],
+ ['b_jusab','1A - JUSA B ',30],
+ ['b_jusac','1A - JUSA C ',30],
+ ['b_gred5354','1A - Gred 53–54 (Gred 14)',16],
+ ['b_gred4752','1A - Gred 47–52 (Gred 12–13)',14],
+ ['b_gred4146','1A - Gred 41–46 (Gred 9–11)',12],
+ ['b_gred3640','1A - Gred 36–40 (Gred 7–8)',8],
+ ['b_gred135','1A - Gred 1–35 (Gred 1–6)',4],
+ ['gred5354','1B - Gred 53–54 (Gred 14)',16],
+ ['gred4752','1B - Gred 47–52 (Gred 12–13)',14],
+ ['gred4146','1B - Gred 41–46 (Gred 9–11)',12],
+ ['gred3640','1B - Gred 36–40 (Gred 7–8)',8],
+ ['gred135','1B - Gred 1–35 (Gred 1–6)',4]]
   .forEach(([id, label, size]) => addData(id, label, size));
 
   if (document.querySelector('input[value="rehatpantri"]').checked) {
@@ -299,7 +308,7 @@ function updateSOA() {
 
   if (addCirc > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${addCirc.toFixed(2)}</td></tr>`;
   if (addServ > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${addServ.toFixed(2)}</td></tr>`;
-  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Tambahan Custom Sirkulasi + Servis (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
+  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Custom (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
 
   const finalTotal = total + addCirc + addServ + custom;
   document.getElementById("totalSOA").textContent = finalTotal.toFixed(2) + " m²";
