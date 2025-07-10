@@ -4,16 +4,39 @@
   <meta charset="UTF-8">
   <title>Kalkulator Keluasan Pejabat (GPP 2024)</title>
   <style>
-    body { font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+    body { font-family: Arial; padding: 20px; max-width: 1000px; margin: auto; }
     h2 { color: #004080; }
-    label { display: block; margin-top: 10px; }
-    input[type="checkbox"], input[type="radio"] { margin-right: 10px; }
-    input, select { padding: 5px; margin-top: 5px; }
     .section-title { margin-top: 20px; font-weight: bold; color: #333; }
-    table { margin-top: 20px; width: 100%; border-collapse: collapse; }
-    table, th, td { border: 1px solid #999; }
-    th, td { padding: 10px; text-align: left; }
-    .highlight-warning { background-color: #ffdddd; color: #b30000; font-weight: bold; }
+    input[type="checkbox"], input[type="radio"] { margin-right: 10px; }
+    input, select { padding: 5px; margin-top: 5px; font-size: 14px; }
+    input[type="number"] { width: 80px; }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px 20px;
+      margin-top: 10px;
+    }
+
+    .input-grid label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    table, th, td { border: 1px solid #ccc; }
+    th { background-color: #f2f2f2; text-align: center; }
+    td { padding: 8px 6px; }
+    td:nth-child(2), td:nth-child(3), td:nth-child(4) { text-align: center; width: 100px; }
+
+    .highlight-warning { background-color: #ffdddd; color: #b30000; font-weight: bold; padding: 8px; border-radius: 5px; }
     button { margin-top: 15px; padding: 8px 15px; background: #004080; color: #fff; border: none; cursor: pointer; border-radius: 5px; }
     button:hover { background-color: #0066cc; }
     #customWarning { display: none; }
@@ -25,8 +48,6 @@
       button { display: none; }
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -34,83 +55,90 @@
 
 <!-- 1A -->
 <div class="section-title">1A. Staf Bilik Individu</div>
-<div id="individualStaff">
-<label>Menteri / Timbalan Menteri: <input type="number" id="b_menteri" value="0"></label>
-<label>JUSA A : <input type="number" id="b_jusaa" value="0"></label>
-<label>JUSA B : <input type="number" id="b_jusab" value="0"></label>
-<label>JUSA C : <input type="number" id="b_jusac" value="0"></label>
-<label>Gred 53–54 (Gred 14): <input type="number" id="b_gred5354" value="0"></label>
-<label>Gred 47–52 (Gred 12–13): <input type="number" id="b_gred4752" value="0"></label>
-<label>Gred 41–46 (Gred 9–11): <input type="number" id="b_gred4146" value="0"></label>
-<label>Gred 36–40 (Gred 7–8): <input type="number" id="b_gred3640" value="0"></label>
-<label>Gred 1–35 (Gred 1–6): <input type="number" id="b_gred135" value="0"></label>
+<div class="input-grid" id="individualStaff">
+  <label><span>Menteri / Timbalan Menteri:</span> <input type="number" id="b_menteri" value="0"></label>
+  <label><span>JUSA A:</span> <input type="number" id="b_jusaa" value="0"></label>
+  <label><span>JUSA B:</span> <input type="number" id="b_jusab" value="0"></label>
+  <label><span>JUSA C:</span> <input type="number" id="b_jusac" value="0"></label>
+  <label><span>Gred 53–54 (Gred 14):</span> <input type="number" id="b_gred5354" value="0"></label>
+  <label><span>Gred 47–52 (Gred 12–13):</span> <input type="number" id="b_gred4752" value="0"></label>
+  <label><span>Gred 41–46 (Gred 9–11):</span> <input type="number" id="b_gred4146" value="0"></label>
+  <label><span>Gred 36–40 (Gred 7–8):</span> <input type="number" id="b_gred3640" value="0"></label>
+  <label><span>Gred 1–35 (Gred 1–6):</span> <input type="number" id="b_gred135" value="0"></label>
 </div>
 
 <!-- 1B -->
 <div class="section-title">1B. Staf Open Plan</div>
-<div id="openPlanStaff">
-<label>Gred 53–54 (Gred 14): <input type="number" id="gred5354" value="0"></label>
-<label>Gred 47–52 (Gred 12–13): <input type="number" id="gred4752" value="0"></label>
-<label>Gred 41–46 (Gred 9–11): <input type="number" id="gred4146" value="0"></label>
-<label>Gred 36–40 (Gred 7–8): <input type="number" id="gred3640" value="0"></label>
-<label>Gred 1–35 (Gred 1–6): <input type="number" id="gred135" value="0"></label>
+<div class="input-grid" id="openPlanStaff">
+  <label><span>Gred 53–54 (Gred 14):</span> <input type="number" id="gred5354" value="0"></label>
+  <label><span>Gred 47–52 (Gred 12–13):</span> <input type="number" id="gred4752" value="0"></label>
+  <label><span>Gred 41–46 (Gred 9–11):</span> <input type="number" id="gred4146" value="0"></label>
+  <label><span>Gred 36–40 (Gred 7–8):</span> <input type="number" id="gred3640" value="0"></label>
+  <label><span>Gred 1–35 (Gred 1–6):</span> <input type="number" id="gred135" value="0"></label>
 </div>
 
 <!-- 2.1 -->
 <div class="section-title">2.1 Ruang Berdasarkan Jumlah Pegawai</div>
-<label><input type="checkbox" value="rehatpantri"> Bilik Rehat / Pantri</label>
-<label><input type="checkbox" value="tandas"> Tandas</label>
+<div class="input-grid">
+  <label><span><input type="checkbox" value="rehatpantri"> Bilik Rehat / Pantri</span></label>
+  <label><span><input type="checkbox" value="tandas"> Tandas</span></label>
+</div>
 
 <!-- 2.2 -->
 <div class="section-title">2.2 Ruang Berdasarkan Peratus Pegawai</div>
-<label><input type="checkbox" value="sumber"> Bilik Sumber / Bacaan</label>
-<label><input type="checkbox" value="kafetaria"> Kafetaria</label>
-<label><input type="checkbox" value="surau"> Bilik Solat</label>
+<div class="input-grid">
+  <label><span><input type="checkbox" value="sumber"> Bilik Sumber / Bacaan</span></label>
+  <label><span><input type="checkbox" value="kafetaria"> Kafetaria</span></label>
+  <label><span><input type="checkbox" value="surau"> Bilik Solat</span></label>
+</div>
 
 <!-- 2.3 -->
 <div class="section-title">2.3 Berdasarkan Bilangan Bilik</div>
-<label><input type="checkbox" value="janitor"> Stor Janitor</label> <input type="number" id="bil_janitor" value="0">
-<label><input type="checkbox" value="fail"> Bilik Fail</label> <input type="number" id="bil_fail" value="0">
-<label><input type="checkbox" value="kebal"> Bilik Kebal</label> <input type="number" id="bil_kebal" value="0">
-<label><input type="checkbox" value="stor"> Stor-Stor</label> <input type="number" id="bil_stor" value="0">
-<label><input type="checkbox" value="tetamu"> Ruang Tetamu</label> <input type="number" id="bil_tetamu" value="0">
-<label><input type="checkbox" value="rekreasi"> Bilik Rekreasi</label> <input type="number" id="bil_rekreasi" value="0">
-
+<div class="input-grid">
+  <label><span><input type="checkbox" value="janitor"> Stor Janitor</span> <input type="number" id="bil_janitor" value="0"></label>
+  <label><span><input type="checkbox" value="fail"> Bilik Fail</span> <input type="number" id="bil_fail" value="0"></label>
+  <label><span><input type="checkbox" value="kebal"> Bilik Kebal</span> <input type="number" id="bil_kebal" value="0"></label>
+  <label><span><input type="checkbox" value="stor"> Stor-Stor</span> <input type="number" id="bil_stor" value="0"></label>
+  <label><span><input type="checkbox" value="tetamu"> Ruang Tetamu</span> <input type="number" id="bil_tetamu" value="0"></label>
+  <label><span><input type="checkbox" value="rekreasi"> Bilik Rekreasi</span> <input type="number" id="bil_rekreasi" value="0"></label>
+</div>
 
 <!-- 2.4 -->
 <div class="section-title">2.4 Berdasarkan Bilangan Pegawai</div>
-<label><input type="checkbox" value="kaunter"> Kaunter</label> <input type="number" id="bil_kaunter" value="0">
-<label><input type="checkbox" value="menunggu"> Menunggu</label> <input type="number" id="bil_menunggu" value="0">
-<label><input type="checkbox" value="seminar"> Seminar</label> <input type="number" id="bil_seminar" value="0">
-<label><input type="checkbox" value="mesyuarat"> Bilik Mesyuarat</label> <input type="number" id="bil_mesyuarat" value="0">
-<label><input type="checkbox" value="galeri"> Ruang Galeri</label> <input type="number" id="bil_galeri" value="0">
+<div class="input-grid">
+  <label><span><input type="checkbox" value="kaunter"> Kaunter</span> <input type="number" id="bil_kaunter" value="0"></label>
+  <label><span><input type="checkbox" value="menunggu"> Menunggu</span> <input type="number" id="bil_menunggu" value="0"></label>
+  <label><span><input type="checkbox" value="seminar"> Seminar</span> <input type="number" id="bil_seminar" value="0"></label>
+  <label><span><input type="checkbox" value="mesyuarat"> Bilik Mesyuarat</span> <input type="number" id="bil_mesyuarat" value="0"></label>
+  <label><span><input type="checkbox" value="galeri"> Ruang Galeri</span> <input type="number" id="bil_galeri" value="0"></label>
+</div>
 
-<!-- 3.0 Tambahan -->
+
+<!-- 3.0 -->
 <div class="section-title">3.0 Ruang Sirkulasi & Servis</div>
+<div class="input-grid">
+  <label><input type="radio" name="circulationOption" id="radio_default" checked onchange="handleCirculationToggle()"> <span>Sirkulasi (25%) + Servis (10%)</span></label>
+  <label>
+    <input type="radio" name="circulationOption" id="radio_custom" onchange="handleCirculationToggle()">
+    <span>Custom (%):</span>
+    <input type="number" id="custom_percent" value="0" min="0" max="100" disabled oninput="handleCustomInput()">
+  </label>
+</div>
 
 <!-- Hidden checkboxes for logic -->
 <input type="checkbox" id="add_circulation" checked style="display:none;">
 <input type="checkbox" id="add_services" checked style="display:none;">
 
-<label><input type="radio" name="circulationOption" id="radio_default" checked onchange="handleCirculationToggle()"> 
-  Sirkulasi (25%) + Servis (10%)</label>
-<label>
-  <input type="radio" name="circulationOption" id="radio_custom" onchange="handleCirculationToggle()"> 
-  Custom (%): 
-  <input type="number" id="custom_percent" value="0" min="0" max="100" disabled oninput="handleCustomInput()" />
-</label>
-
-<!-- 4.0 -->
-<div id="printable">
 <!-- Warning -->
 <p id="customWarning" class="highlight-warning" style="display: none;">
   ⚠️ Amaran: Jumlah peratusan sirkulasi + servis melebihi 35%!
 </p>
-  <div class="section-title">4.0 Jumlah Keseluruhan Staf</div>
-  <p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
 
-  <!-- Jadual SOA -->
-  <div class="section-title">5.0 Jadual SOA</div>
+<div class="section-title">4.0 Jumlah Keseluruhan Staf</div>
+<p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
+
+<div class="section-title">5.0 Jadual SOA</div>
+<div id="printable">
   <table>
     <thead>
       <tr>
@@ -132,6 +160,7 @@
   </table>
 </div>
 
+<!-- Butang tindakan -->
 <!-- Buttons -->
 <button onclick="window.print()">Cetak Laporan</button>
 <button onclick="downloadPDF()">Muat Turun PDF</button>
@@ -189,13 +218,6 @@ function handleCustomInput() {
   warning.style.display = val > 35 ? "block" : "none";
   updateSOA();
 }
-
-
-
-
-
-
-
 
 
 function calculateTotalStaff() {
@@ -343,3 +365,4 @@ window.onload = updateSOA;
 
 </body>
 </html>
+
