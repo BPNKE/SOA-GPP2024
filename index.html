@@ -56,7 +56,7 @@
 <!-- 1A -->
 <div class="section-title" style="background-color: rgb(150, 207, 243);">1A. Staf Bilik Individu</div>
 <div class="input-grid" id="individualStaff">
-  <label><span style="">Menteri :</span> <input type="number" id="b_menteri" value=“0” min=“0”></label>
+  <label><span style="">Menteri:</span> <input type="number" id="b_menteri" value=“0” min=“0”></label>
    <label><span>Timbalan Menteri:</span> <input type="number" id="b_tbmenteri" value=“0” min=“0”></label>
   <label><span>Turus 1:</span> <input type="number" id="b_turus1" value=“0” min=“0”></label>
   <label><span>Turus 2:</span> <input type="number" id="b_turus2" value=“0” min=“0”></label>
@@ -150,12 +150,12 @@
 <p id="customWarning" class="highlight-warning" style="display: none;">
   ⚠️ Amaran: Jumlah peratusan sirkulasi + servis melebihi 35%!
 </p>
-
+<div id="printable">
 <div class="section-title" style="background-color: rgb(150, 207, 243);">4.0 Jumlah Keseluruhan Staf</div>
 <p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
 
 <div class="section-title" style="background-color: rgb(150, 207, 243);">5.0 Jadual SOA</div>
-<div id="printable">
+
   <table>
     <thead>
       <tr>
@@ -281,42 +281,54 @@ function updateSOA() {
  ['gred135','1B - Gred 1–35 (Gred 1–6)',4]]
   .forEach(([id, label, size]) => addData(id, label, size));
 
- if (document.querySelector('input[value="rehatpantri"]').checked) {
-  const a = totalStaff * 1.8;
-  soaData.push(['2.1 - Rehat / Pantri', totalStaff, 1.8, a]);
+if (document.querySelector('input[value="rehatpantri"]').checked) {
+  const pekali = 1.8;
+  const a = Math.max(totalStaff * pekali, pekali); // Minimum ialah 1 pekali
+  soaData.push(['2.1 - Rehat / Pantri', totalStaff, pekali, a]);
   total += a;
 }
 
 if (document.querySelector('input[value="tandas"]').checked) {
-  const a = totalStaff * 0.05 * 3.5;
-  soaData.push(['2.1 - Tandas (5% x 3.5 m²)', (totalStaff * 0.05).toFixed(1), 3.5, a]);
+  const bil = totalStaff * 0.05;
+  const a = Math.max(bil * 3.5, 3.5); // Pastikan minimum 3.5 m²
+  soaData.push(['2.1 - Tandas (5% x 3.5 m²)', bil.toFixed(1), 3.5, a]);
   total += a;
 }
 
+
+// 2.2 - Bilik Sumber
 if (document.querySelector('input[value="sumber"]').checked) {
+  const pekali = 1.9;
   const count = totalStaff * 0.1;
-  const area = count * 1.9;
-  soaData.push(['2.2 - Bilik Sumber (10% x 1.9 m²)', count.toFixed(1), 1.9, area]);
+  const area = Math.max(count * pekali, pekali); // Minimum 1 pekali
+  soaData.push(['2.2 - Bilik Sumber (10% x 1.9 m²)', count.toFixed(1), pekali, area]);
   total += area;
 }
 
+// 2.2 - Kafetaria
 if (document.querySelector('input[value="kafetaria"]').checked) {
-  const a = totalStaff * 0.3 * 2.0;
-  soaData.push(['2.2 - Kafetaria', (totalStaff * 0.3).toFixed(1), 2.0, a]);
+  const pekali = 2.0;
+  const count = totalStaff * 0.3;
+  const a = Math.max(count * pekali, pekali); // Minimum 1 pekali
+  soaData.push(['2.2 - Kafetaria (30% x 2.0 m²)', count.toFixed(1), pekali, a]);
   total += a;
 }
 
 if (document.querySelector('input[value="surau"]').checked) {
   const count = totalStaff * 0.2;
-  const area = count * 1.4;
+  const area = Math.max(count * 1.4, 1.4); // Minimum 1.4 m²
   soaData.push(['2.2 - Bilik Solat (20% x 1.4 m²)', count.toFixed(1), 1.4, area]);
   total += area;
 }
 
 // Seksyen 2.3: Ruang berdasarkan bilangan bilik
-[['janitor','2.3 - Stor Janitor',3], ['fail','2.3 - Bilik Fail',20], ['kebal','2.3 - Bilik Kebal',10],
- ['stor','2.3 - Stor-Stor',30], ['tetamu','2.3 - Ruang Tetamu',20]]
-.forEach(([val, label, size]) => {
+[['janitor','2.3 - Stor Janitor',3], 
+ ['fail','2.3 - Bilik Fail',20], 
+ ['kebal','2.3 - Bilik Kebal',10],
+ ['stor','2.3 - Stor-Stor',30], 
+ ['tetamu','2.3 - Ruang Tetamu',20],
+ ['rekreasi','2.3 - Bilik Rekreasi',36]  // ← Tambah baris ini
+].forEach(([val, label, size]) => {
   if (document.querySelector(`input[value="${val}"]`).checked) {
     let bil = parseInt(document.getElementById(`bil_${val}`).value || 0);
     bil = isNaN(bil) || bil < 0 ? 0 : bil;
@@ -325,6 +337,7 @@ if (document.querySelector('input[value="surau"]').checked) {
     total += area;
   }
 });
+
 
 // Seksyen 2.4: Ruang berdasarkan bilangan pegawai
 [['kaunter','2.4 - Kaunter',4], ['menunggu','2.4 - Menunggu',1.4], ['seminar','2.4 - Seminar',4],
