@@ -51,20 +51,23 @@
 </head>
 <body>
 
-<h2 style="color: black; font-family: Arial;">Kalkulator Keluasan Pejabat (GPP 2024)</h2>
+<h2 style="color: black; font-family: Arial; text-align: center;">Kalkulator Keluasan Pejabat (GPP 2024)</h2>
 
 <!-- 1A -->
 <div class="section-title" style="background-color: rgb(150, 207, 243);">1A. Staf Bilik Individu</div>
 <div class="input-grid" id="individualStaff">
   <label><span style="">Menteri / Timbalan Menteri:</span> <input type="number" id="b_menteri" value="0"></label>
+   <label><span>Timbalan Menteri:</span> <input type="number" id="b_tbmenteri" value="0"></label>
+  <label><span>Turus 1:</span> <input type="number" id="b_turus1" value="0"></label>
+  <label><span>Turus 2:</span> <input type="number" id="b_turus2" value="0"></label>
+   <label><span>Turus 3:</span> <input type="number" id="b_turus3" value="0"></label>
   <label><span>JUSA A:</span> <input type="number" id="b_jusaa" value="0"></label>
   <label><span>JUSA B:</span> <input type="number" id="b_jusab" value="0"></label>
   <label><span>JUSA C:</span> <input type="number" id="b_jusac" value="0"></label>
   <label><span>Gred 53–54 (Gred 14):</span> <input type="number" id="b_gred5354" value="0"></label>
   <label><span>Gred 47–52 (Gred 12–13):</span> <input type="number" id="b_gred4752" value="0"></label>
-  <label><span>Gred 41–46 (Gred 9–11):</span> <input type="number" id="b_gred4146" value="0"></label>
-  <label><span>Gred 36–40 (Gred 7–8):</span> <input type="number" id="b_gred3640" value="0"></label>
-  <label><span>Gred 1–35 (Gred 1–6):</span> <input type="number" id="b_gred135" value="0"></label>
+  <label><span>Gred 41–46 (Gred 9–11) Ketua Jabatan:</span> <input type="number" id="b_gred4146" value="0"></label>
+  <label><span>Gred 1–46 (Gred 1–11) Faktor Keselamatan:</span> <input type="number" id="b_gred135" value="0"></label>
 </div>
 
 <!-- 1B -->
@@ -256,16 +259,20 @@ function updateSOA() {
       total += area;
     }
   };
+  
 
-[['b_menteri','1A - Menteri / Timbalan Menteri',100],
+[['b_menteri','1A - Menteri',100],
+ ['b_tbmenteri','1A - Timbalan Menteri ',86],
+ ['b_turus1','1A - Turus 1 ',78],
+ ['b_turus2','1A - Turus 2 ',62],
+ ['b_turus3','1A - Turus 3 ',47],
  ['b_jusaa','1A - JUSA A ',36],
  ['b_jusab','1A - JUSA B ',30],
  ['b_jusac','1A - JUSA C ',30],
- ['b_gred5354','1A - Gred 53–54 (Gred 14)',16],
- ['b_gred4752','1A - Gred 47–52 (Gred 12–13)',14],
- ['b_gred4146','1A - Gred 41–46 (Gred 9–11)',12],
- ['b_gred3640','1A - Gred 36–40 (Gred 7–8)',8],
- ['b_gred135','1A - Gred 1–35 (Gred 1–6)',4],
+ ['b_gred5354','1A - Gred 53–54 (Gred 14)',30],
+ ['b_gred4752','1A - Gred 47–52 (Gred 12–13)',24],
+ ['b_gred4146','1A - Gred 41–46 (Gred 9–11) Ketua Jabatan',16],
+ ['b_gred135','1A - Gred 1–46 (Gred 1–11) Faktor keselamatan',12],
  ['gred5354','1B - Gred 53–54 (Gred 14)',16],
  ['gred4752','1B - Gred 47–52 (Gred 12–13)',14],
  ['gred4146','1B - Gred 41–46 (Gred 9–11)',12],
@@ -376,6 +383,8 @@ document.querySelectorAll('input').forEach(input => {
 });
 window.onload = updateSOA;
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 </body>
 </html>
