@@ -1,1 +1,428 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Keluasan Pejabat (GPP 2024)</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 1000px; margin: auto; }
+    h2 { color: #004080; }
+    .section-title { margin-top: 20px; font-weight: bold; color: #333; }
+    input[type="checkbox"], input[type="radio"] { margin-right: 10px; }
+    input, select { padding: 5px; margin-top: 5px; font-size: 14px; }
+    input[type="number"] { width: 80px; }
 
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px 20px;
+      margin-top: 10px;
+    }
+
+    .input-grid label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    table, th, td { border: 1px solid #ccc; }
+    th { background-color: #f2f2f2; text-align: center; }
+    td { padding: 8px 6px; }
+    td:nth-child(2), td:nth-child(3), td:nth-child(4) { text-align: center; width: 100px; }
+
+    .highlight-warning { background-color: #ffdddd; color: #b30000; font-weight: bold; padding: 8px; border-radius: 5px; }
+    button { margin-top: 15px; padding: 8px 15px; background: #004080; color: #fff; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background-color: #0066cc; }
+    #customWarning { display: none; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printable, #printable * { visibility: visible; }
+      #printable { position: absolute; top: 0; left: 0; width: 100%; }
+      button { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="color: black; font-family: Arial; text-align: center;">Kalkulator Keluasan Pejabat (GPP 2024)</h2>
+
+<!-- 1A -->
+<div class="section-title" style="background-color: rgb(150, 207, 243);">1A. Staf Bilik Individu</div>
+<div class="input-grid" id="individualStaff">
+  <label><span style="">Menteri:</span> <input type="number" id="b_menteri" value=“0” min=“0”></label>
+   <label><span>Timbalan Menteri:</span> <input type="number" id="b_tbmenteri" value=“0” min=“0”></label>
+  <label><span>Turus 1:</span> <input type="number" id="b_turus1" value=“0” min=“0”></label>
+  <label><span>Turus 2:</span> <input type="number" id="b_turus2" value=“0” min=“0”></label>
+   <label><span>Turus 3:</span> <input type="number" id="b_turus3" value=“0” min=“0”></label>
+  <label><span>JUSA A:</span> <input type="number" id="b_jusaa" value=“0” min=“0”></label>
+  <label><span>JUSA B:</span> <input type="number" id="b_jusab" value=“0” min=“0”></label>
+  <label><span>JUSA C:</span> <input type="number" id="b_jusac" value=“0” min=“0”></label>
+  <label><span>Gred 53–54 (Gred 14):</span> <input type="number" id="b_gred5354" value=“0” min=“0”></label>
+  <label><span>Gred 47–52 (Gred 12–13):</span> <input type="number" id="b_gred4752" value=“0” min=“0”></label>
+  <label><span>Gred 41–46 (Gred 9–11) Ketua Jabatan:</span> <input type="number" id="b_gred4146" value=“0” min=“0”></label>
+  <label><span>Gred 1–46 (Gred 1–11) Faktor Keselamatan:</span> <input type="number" id="b_gred135" value=“0” min=“0”></label>
+</div>
+
+<!-- 1B -->
+<div class="section-title" style="background-color: rgb(150, 207, 243);">1B. Staf Open Plan</div>
+<div class="input-grid" id="openPlanStaff">
+  <label><span>Gred 53–54 (Gred 14):</span> <input type="number" id="gred5354" value=“0” min=“0”></label>
+  <label><span>Gred 47–52 (Gred 12–13):</span> <input type="number" id="gred4752" value=“0” min=“0”></label>
+  <label><span>Gred 41–46 (Gred 9–11):</span> <input type="number" id="gred4146" value=“0” min=“0”></label>
+  <label><span>Gred 36–40 (Gred 7–8):</span> <input type="number" id="gred3640" value=“0” min=“0”></label>
+  <label><span>Gred 1–35 (Gred 1–6):</span> <input type="number" id="gred135" value=“0” min=“0”></label>
+</div>
+
+<!-- 2.1 -->
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.1 Ruang Berdasarkan Jumlah Pegawai</div>
+<div class="input-grid">
+  <label><span><input type="checkbox" value="rehatpantri"> Bilik Rehat / Pantri</span></label>
+  <label><span><input type="checkbox" value="tandas"> Tandas</span></label>
+</div>
+
+<!-- 2.2 -->
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.2 Ruang Berdasarkan Peratus Pegawai</div>
+<div class="input-grid">
+  <label><span><input type="checkbox" value="sumber"> Bilik Sumber / Bacaan</span></label>
+  <label><span><input type="checkbox" value="kafetaria"> Kafetaria</span></label>
+  <label><span><input type="checkbox" value="surau"> Bilik Solat</span></label>
+</div>
+
+<!-- 2.3 -->
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.3 Berdasarkan Bilangan Bilik</div>
+<div class="input-grid">
+  <label><span><input type="checkbox" value="janitor"> Stor Janitor</span> <input type="number" id="bil_janitor" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="fail"> Bilik Fail</span> <input type="number" id="bil_fail" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="kebal"> Bilik Kebal</span> <input type="number" id="bil_kebal" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="stor"> Stor-Stor</span> <input type="number" id="bil_stor" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="tetamu"> Ruang Tetamu</span> <input type="number" id="bil_tetamu" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="rekreasi"> Bilik Rekreasi</span> <input type="number" id="bil_rekreasi" value=“0” min=“0”></label>
+</div>
+
+<!-- 2.4 -->
+<div class="section-title" style="background-color: rgb(150, 207, 243);">2.4 Berdasarkan Bilangan Pegawai</div>
+<div class="input-grid">
+  <label><span><input type="checkbox" value="kaunter"> Kaunter</span> <input type="number" id="bil_kaunter" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="menunggu"> Menunggu</span> <input type="number" id="bil_menunggu" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="seminar"> Seminar</span> <input type="number" id="bil_seminar" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="mesyuarat"> Bilik Mesyuarat</span> <input type="number" id="bil_mesyuarat" value=“0” min=“0”></label>
+  <label><span><input type="checkbox" value="galeri"> Ruang Galeri</span> <input type="number" id="bil_galeri" value=“0” min=“0”></label>
+</div>
+
+
+<div class="section-title" style="background-color: rgb(150, 207, 243);">3.0 Ruang Sirkulasi dan Servis</div>
+<div class="input-grid">
+  <label for="radio_default">
+    <input type="radio" name="circulationOption" id="radio_default" checked onchange="handleCirculationToggle()">
+    <span style="text-align: left;">Sirkulasi (25%) + Servis (10%)</span>
+  </label>
+
+  <label for="radio_custom">
+    <input type="radio" name="circulationOption" id="radio_custom" onchange="handleCirculationToggle()">
+    <span style="text-align: left;">Ruang Sirkulasi dan Servis Manual</span>
+  </label>
+
+  <input
+    type="number"
+    id="custom_percent"
+    value=“0” min=“0”
+    min="0"
+    max="100"
+    disabled
+    oninput="handleCustomInput()"
+    aria-label="Persentase manual untuk ruang sirkulasi dan servis"
+  >
+</div>
+
+
+<!-- Hidden checkboxes for logic -->
+<input type="checkbox" id="add_circulation" checked style="display:none;">
+<input type="checkbox" id="add_services" checked style="display:none;">
+
+<!-- Warning -->
+<p id="customWarning" class="highlight-warning" style="display: none;">
+  ⚠️ Amaran: Jumlah peratusan sirkulasi + servis melebihi 35%!
+</p>
+<div id="printable">
+<div class="section-title" style="background-color: rgb(150, 207, 243);">4.0 Jumlah Keseluruhan Staf</div>
+<p><strong>Jumlah Keseluruhan Staf:</strong> <span id="totalStaff">0</span></p>
+
+<div class="section-title" style="background-color: rgb(150, 207, 243);">5.0 Jadual SOA</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ruang</th>
+        <th>Bilangan</th>
+        <th>Pekali (m²)</th>
+        <th>Keluasan (m²)</th>
+      </tr>
+    </thead>
+    <tbody id="soaBody">
+      <tr><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"><strong>Jumlah Keluasan</strong></td>
+        <td id="totalSOA">0.00 m²</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- Butang tindakan -->
+<!-- Buttons -->
+<button onclick="window.print()">Cetak Laporan</button>
+<button onclick="downloadPDF()">Muat Turun PDF</button>
+
+<script>
+
+function handleCustomInput() {
+  const val = parseFloat(document.getElementById('custom_percent').value || 0);
+  if (val > 0) {
+    document.getElementById('add_circulation').checked = false;
+    document.getElementById('add_services').checked = false;
+  }
+  updateSOA();
+}
+
+function handleDefaultCheck() {
+  const isDefaultChecked = document.getElementById('add_circulation').checked || document.getElementById('add_services').checked;
+  if (isDefaultChecked) {
+    document.getElementById('custom_percent').value = 0;
+  }
+  updateSOA();
+}
+
+
+function disableDefault() {
+  const val = parseFloat(document.getElementById('custom_percent').value || 0);
+  if (val > 0) {
+    document.getElementById('add_circulation').checked = false;
+    document.getElementById('add_services').checked = false;
+  }
+  updateSOA();
+}
+function handleCirculationToggle() {
+  const isCustom = document.getElementById("radio_custom").checked;
+  const customInput = document.getElementById("custom_percent");
+  const circCheckbox = document.getElementById("add_circulation");
+  const servCheckbox = document.getElementById("add_services");
+
+  if (isCustom) {
+    customInput.disabled = false;
+    circCheckbox.checked = false;
+    servCheckbox.checked = false;
+  } else {
+    customInput.value = 0;
+    customInput.disabled = true;
+    circCheckbox.checked = true;
+    servCheckbox.checked = true;
+    document.getElementById("customWarning").style.display = 'none';
+  }
+  updateSOA();
+}
+
+function handleCustomInput() {
+  const val = parseFloat(document.getElementById('custom_percent').value || 0);
+  const warning = document.getElementById("customWarning");
+  warning.style.display = val > 35 ? "block" : "none";
+  updateSOA();
+}
+
+
+function calculateTotalStaff() {
+  let total = 0;
+  document.querySelectorAll('#individualStaff input, #openPlanStaff input').forEach(input => {
+    total += parseInt(input.value || 0);
+  });
+  return total;
+}
+
+function updateSOA() {
+  const totalStaff = calculateTotalStaff();
+  document.getElementById("totalStaff").textContent = totalStaff;
+  const soaData = [];
+  let total = 0;
+
+  const addData = (id, label, size) => {
+    const count = parseInt(document.getElementById(id).value || 0);
+    if (count > 0) {
+      const area = count * size;
+      soaData.push([label, count, size, area]);
+      total += area;
+    }
+  };
+  
+
+[['b_menteri','1A - Menteri',100],
+ ['b_tbmenteri','1A - Timbalan Menteri ',86],
+ ['b_turus1','1A - Turus 1 ',78],
+ ['b_turus2','1A - Turus 2 ',62],
+ ['b_turus3','1A - Turus 3 ',47],
+ ['b_jusaa','1A - JUSA A ',36],
+ ['b_jusab','1A - JUSA B ',30],
+ ['b_jusac','1A - JUSA C ',30],
+ ['b_gred5354','1A - Gred 53–54 (Gred 14)',30],
+ ['b_gred4752','1A - Gred 47–52 (Gred 12–13)',24],
+ ['b_gred4146','1A - Gred 41–46 (Gred 9–11)Ketua Jabatan',16],
+ ['b_gred135','1A - Gred 1–46 (Gred 1–11) Faktor keselamatan',12],
+ ['gred5354','1B - Gred 53–54 (Gred 14)',16],
+ ['gred4752','1B - Gred 47–52 (Gred 12–13)',14],
+ ['gred4146','1B - Gred 41–46 (Gred 9–11)',12],
+ ['gred3640','1B - Gred 36–40 (Gred 7–8)',8],
+ ['gred135','1B - Gred 1–35 (Gred 1–6)',4]]
+  .forEach(([id, label, size]) => addData(id, label, size));
+
+if (document.querySelector('input[value="rehatpantri"]').checked) {
+  const pekali = 1.8;
+  const a = Math.max(totalStaff * pekali, pekali); // Minimum ialah 1 pekali
+  soaData.push(['2.1 - Rehat / Pantri', totalStaff, pekali, a]);
+  total += a;
+}
+
+if (document.querySelector('input[value="tandas"]').checked) {
+  const bil = totalStaff * 0.05;
+  const a = Math.max(bil * 3.5, 3.5); // Pastikan minimum 3.5 m²
+  soaData.push(['2.1 - Tandas (5% x 3.5 m²)', bil.toFixed(1), 3.5, a]);
+  total += a;
+}
+
+
+// 2.2 - Bilik Sumber
+if (document.querySelector('input[value="sumber"]').checked) {
+  const pekali = 1.9;
+  const count = totalStaff * 0.1;
+  const area = Math.max(count * pekali, pekali); // Minimum 1 pekali
+  soaData.push(['2.2 - Bilik Sumber (10% x 1.9 m²)', count.toFixed(1), pekali, area]);
+  total += area;
+}
+
+// 2.2 - Kafetaria
+if (document.querySelector('input[value="kafetaria"]').checked) {
+  const pekali = 2.0;
+  const count = totalStaff * 0.3;
+  const a = Math.max(count * pekali, pekali); // Minimum 1 pekali
+  soaData.push(['2.2 - Kafetaria (30% x 2.0 m²)', count.toFixed(1), pekali, a]);
+  total += a;
+}
+
+if (document.querySelector('input[value="surau"]').checked) {
+  const count = totalStaff * 0.2;
+  const area = Math.max(count * 1.4, 1.4); // Minimum 1.4 m²
+  soaData.push(['2.2 - Bilik Solat (20% x 1.4 m²)', count.toFixed(1), 1.4, area]);
+  total += area;
+}
+
+// Seksyen 2.3: Ruang berdasarkan bilangan bilik
+[['janitor','2.3 - Stor Janitor',3], 
+ ['fail','2.3 - Bilik Fail',20], 
+ ['kebal','2.3 - Bilik Kebal',10],
+ ['stor','2.3 - Stor-Stor',30], 
+ ['tetamu','2.3 - Ruang Tetamu',20],
+ ['rekreasi','2.3 - Bilik Rekreasi',36]  // ← Tambah baris ini
+].forEach(([val, label, size]) => {
+  if (document.querySelector(`input[value="${val}"]`).checked) {
+    let bil = parseInt(document.getElementById(`bil_${val}`).value || 0);
+    bil = isNaN(bil) || bil < 0 ? 0 : bil;
+    const area = bil * size;
+    soaData.push([label, bil, size, area]);
+    total += area;
+  }
+});
+
+
+// Seksyen 2.4: Ruang berdasarkan bilangan pegawai
+[['kaunter','2.4 - Kaunter',4.0], ['menunggu','2.4 - Menunggu',1.0], ['seminar','2.4 - Seminar',4],
+ ['mesyuarat','2.4 - Bilik Mesyuarat',1.6], ['galeri','2.4 - Ruang Galeri',2.0]]
+.forEach(([val, label, size]) => {
+  if (document.querySelector(`input[value="${val}"]`).checked) {
+    let bil = parseInt(document.getElementById(`bil_${val}`).value || 0);
+    bil = isNaN(bil) || bil < 0 ? 0 : bil;
+    const area = bil * size;
+    soaData.push([label, bil, size, area]);
+    total += area;
+  }
+});
+
+
+  const tbody = document.getElementById("soaBody");
+  tbody.innerHTML = "";
+
+  soaData.forEach(([label, bil, pekali, luas]) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${label}</td><td>${bil}</td><td>${pekali}</td><td>${luas.toFixed(2)}</td>`;
+    tbody.appendChild(row);
+  });
+
+  let extra = 0;
+  const customPercent = parseFloat(document.getElementById('custom_percent').value || 0);
+  const custom = (!isNaN(customPercent) && customPercent > 0) ? total * (customPercent / 100) : 0;
+
+  const warning = document.getElementById("customWarning");
+  warning.style.display = customPercent > 35 ? "block" : "none";
+
+  const addCirc = document.getElementById('add_circulation').checked ? total * 0.25 : 0;
+  const addServ = document.getElementById('add_services').checked ? total * 0.10 : 0;
+
+  if (addCirc > 0) tbody.innerHTML += `<tr><td>3.0 - Sirkulasi (25%)</td><td>-</td><td>25%</td><td>${addCirc.toFixed(2)}</td></tr>`;
+  if (addServ > 0) tbody.innerHTML += `<tr><td>3.0 - Servis (10%)</td><td>-</td><td>10%</td><td>${addServ.toFixed(2)}</td></tr>`;
+  if (custom > 0) tbody.innerHTML += `<tr><td>3.0 - Ruang Sirkulasi dan Servis Manual  (${customPercent}%)</td><td>-</td><td>${customPercent}%</td><td>${custom.toFixed(2)}</td></tr>`;
+
+  const finalTotal = total + addCirc + addServ + custom;
+  document.getElementById("totalSOA").textContent = finalTotal.toFixed(2) + " m²";
+  document.getElementById("totalSOA").classList.toggle("highlight-warning", finalTotal > 2000);
+}
+
+async function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const element = document.getElementById("printable");
+  const canvas = await html2canvas(element, { scale: 3, useCORS: true });
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgWidth = pageWidth - 20;
+  const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+  pdf.setFontSize(12);
+  pdf.text("Kalkulator Keluasan Pejabat", 10, 10);
+  pdf.addImage(imgData, "PNG", 10, 15, imgWidth, imgHeight);
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
+  pdf.save(`kiraan_pejabat_${dateStr}.pdf`);
+}
+
+document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('input', updateSOA);
+  input.addEventListener('change', updateSOA);
+});
+window.onload = updateSOA;
+
+</script>
+
+<script>
+document.querySelectorAll('input[type="number"]').forEach(input => {
+  input.addEventListener('input', () => {
+    if (parseInt(input.value) < 0) {
+      input.value = 0;
+    }
+  });
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</body>
+</html>
+
+
+    
