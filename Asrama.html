@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator Jadual Penginapan</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+    h2, h3 { color: #004080; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    select, input[type="number"] { width: 100%; max-width: 300px; padding: 5px; margin-top: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #e0eaff; }
+    tfoot td { font-weight: bold; background-color: #f1f1f1; }
+    .button-group { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .button-group button { padding: 8px 16px; }
+  </style>
+</head>
+<body>
+  <h2>Kalkulator Schedule of Accommodation (Asrama)</h2>
+
+  <label for="institusi">Kelayakan Institusi:</label>
+  <select id="institusi" onchange="kemaskiniKategori()">
+    <option value="">-- Sila pilih institusi --</option>
+    <option value="sekolah_rendah">Sekolah Rendah</option>
+    <option value="sekolah_menengah">Sek. Menengah/MRSM</option>
+    <option value="sbp">SBP/MRSM/Sek. Sukan</option>
+    <option value="kolej_vokasional">Kolej Vokasional/Matrikulasi</option>
+    <option value="politeknik">Politeknik/ILP/IKBN/IKM</option>
+    <option value="universiti">Universiti Awam</option>
+    <option value="ipg">Institut Pendidikan Guru/Kolej Jururawat</option>
+    <option value="latihan_perkhidmatan">Institut Latihan Dalam Perkhidmatan</option>
+    <option value="mes_kuarters">Mes dan Kuarters Transit</option>
+  </select>
+
+  <label for="kategoriBilik">Kategori:</label>
+  <select id="kategoriBilik" onchange="kemaskiniSubpilihan()">
+    <option value="">-- Sila pilih --</option>
+  </select>
+
+  <label for="subKategori">Sub-kategori:</label>
+  <select id="subKategori" onchange="kiraKeluasan()">
+    <option value="">-- Sila pilih kategori dahulu --</option>
+  </select>
+
+  <label for="pilihanPejabat">Pilihan Pejabat:</label>
+  <select id="pilihanPejabat" onchange="toggleInputPejabat(); kiraKeluasan()">
+    <option value="formula">Kira secara formula (per pelajar)</option>
+    <option value="manual">Masukkan jumlah keluasan secara manual</option>
+  </select>
+
+  <div id="pejabatFormulaGroup">
+    <label>Keluasan Pejabat per Pelajar (m²):</label>
+    <p style="margin-top: 5px; font-weight: bold;">0.40</p>
+  </div>
+
+  <div id="pejabatManualGroup" style="display: none;">
+    <label for="inputPejabatManual">Jumlah keluasan pejabat (m²):</label>
+    <input type="number" id="inputPejabatManual" min="0" step="0.01" value="0" oninput="kiraKeluasan()" />
+  </div>
+
+  <label><input type="checkbox" id="includeDewanMakan" checked onchange="kiraKeluasan()"> Sertakan Dewan Makan</label>
+  <label><input type="checkbox" id="includeDapur" checked onchange="kiraKeluasan()"> Sertakan Dapur</label>
+
+  <label for="bilanganPelajar">Bilangan Pelajar:</label>
+  <input type="number" id="bilanganPelajar" min="1" step="1" value="100" oninput="kiraKeluasan()" />
+
+  <h3>Tambahan Ruang Sirkulasi dan Servis (%)</h3>
+  <label><input type="radio" name="tambahan" value="default" checked> Tambah 35%</label>
+  <label><input type="radio" name="tambahan" value="custom"> Tambah Custom (%)</label>
+
+  <div id="customPercentGroup" style="display: none;">
+    <input type="number" id="customPercent" min="0" step="1" value="0" oninput="kiraKeluasan()" />
+  </div>
+
+  <div id="hasilKira">
+    <h3>Jadual Keluasan Asrama</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Jenis Ruang</th>
+          <th>Keluasan Seorang (m²)</th>
+          <th>Jumlah Keluasan (m²)</th>
+        </tr>
+      </thead>
+      <tbody id="jadualHasil">
+        <tr><td colspan="3">Sila pilih kategori dan sub-kategori serta masukkan bilangan pelajar.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="button-group">
+    <button onclick="window.print()">Cetak</button>
+  </div>
+
+<script>
+const allowedKategoriByInstitusi = {
+  sekolah_rendah: ["14_20"],
+  sekolah_menengah: ["14_20", "8_12"],
+  sbp: ["14_20", "8_12_min", "8_12_max"],
+  kolej_vokasional: ["4_6"],
+  politeknik: ["4_6", "2_orang"], 
+  universiti: ["4_6", "2_orang", "1_orang"], 
+  ipg: ["4_6", "2_orang", "1_orang"],
+  latihan_perkhidmatan: ["4_6", "2_orang", "1_orang"],
+  mes_kuarters: ["4_6", "2_orang", "1_orang"]
+};
+
+
+const allowedSubKategoriByKategori = {
+  "14_20": ["Pelajar", "Pelatih"],
+  "8_12": ["Pelajar", "Pelatih"],
+  "8_12_min": ["Pelajar", "Pelatih"],
+  "8_12_max": ["Pelajar", "Pelatih"],
+  "4_6": ["Pelajar", "Pelatih", "Kumpulan Pelaksana Gred < 40"],
+  "2_orang": ["Pelajar", "Pelatih", "Pegawai Gred 41-53"],
+  "1_orang": ["Pelajar", "Pegawai Gred 41-53", "Pegawai Gred 54 >"]
+};
+
+const dataKeluasan = {
+  "14_20": { "Pelajar": 4.00, "Pelatih": 4.00 },
+  "8_12": { "Pelajar": 4.75, "Pelatih": 4.75 },
+  "8_12_min": { "Pelajar": 4.75, "Pelatih": 4.75 },
+  "8_12_max": { "Pelajar": 6.85, "Pelatih": 6.85 },
+  "4_6": { "Pelajar": 6.85, "Pelatih": 6.85, "Kumpulan Pelaksana Gred < 40": 6.85 },
+  "2_orang": {
+    "Pelajar": 8.40,                         // ✅ dikemaskini
+    "Pelatih": 9.50,                         // ✅ dikemaskini
+    "Kumpulan Pelaksana Gred < 40": 15.00    // ✅ nilai baharu
+  },
+  "1_orang": {
+    "Pelajar": 11.20,
+    "Pegawai Gred 41-53": 14.00,
+    "Pegawai Gred 54 >": 20.00
+  }
+};
+
+function kemaskiniKategori() {
+  const institusi = document.getElementById("institusi").value;
+  const kategoriSelect = document.getElementById("kategoriBilik");
+  const subSelect = document.getElementById("subKategori");
+  kategoriSelect.innerHTML = '<option value="">-- Sila pilih --</option>';
+  subSelect.innerHTML = '';
+
+  if (allowedKategoriByInstitusi[institusi]) {
+    allowedKategoriByInstitusi[institusi].forEach(kat => {
+      const label = {
+        "14_20": "Dormitori (14-20 orang)",
+        "8_12": "8-12 orang sebilik",
+        "4_6": "4-6 orang sebilik",
+        "2_orang": "2 orang sebilik",
+        "1_orang": "1 orang sebilik",
+        "8_12_min": "8-12 orang (Minimum)",
+        "8_12_max": "8-12 orang (Maksimum)"
+      }[kat];
+      const opt = document.createElement("option");
+      opt.value = kat;
+      opt.textContent = label || kat;
+      kategoriSelect.appendChild(opt);
+    });
+
+    if (institusi === "sekolah_rendah") {
+      kategoriSelect.value = "14_20";
+    }
+  }
+
+  kemaskiniSubpilihan();
+}
+
+function kemaskiniSubpilihan() {
+  const kategori = document.getElementById("kategoriBilik").value;
+  const subSelect = document.getElementById("subKategori");
+  const institusi = document.getElementById("institusi").value;
+  subSelect.innerHTML = '';
+
+const autoPelajarInstitusi = [
+  "sekolah_rendah",
+  "sekolah_menengah",
+  "sbp",
+  "kolej_vokasional",
+  "politeknik"
+];
+
+
+  if (autoPelajarInstitusi.includes(institusi)) {
+    const opt = document.createElement("option");
+    opt.value = "Pelajar";
+    opt.textContent = "Pelajar";
+    subSelect.appendChild(opt);
+    subSelect.value = "Pelajar";
+    subSelect.disabled = true;
+    kiraKeluasan();
+    return;
+  } else {
+    subSelect.disabled = false;
+  }
+
+  if (allowedSubKategoriByKategori[kategori]) {
+    allowedSubKategoriByKategori[kategori].forEach(sub => {
+      const opt = document.createElement("option");
+      opt.value = sub;
+      opt.textContent = sub;
+      subSelect.appendChild(opt);
+    });
+  }
+
+  kiraKeluasan();
+}
+
+function toggleInputPejabat() {
+  const pilihan = document.getElementById("pilihanPejabat").value;
+  document.getElementById("pejabatFormulaGroup").style.display = pilihan === "formula" ? "block" : "none";
+  document.getElementById("pejabatManualGroup").style.display = pilihan === "manual" ? "block" : "none";
+}
+
+function kiraKeluasan() {
+  const kategori = document.getElementById("kategoriBilik").value;
+  const sub = document.getElementById("subKategori").value;
+  const bil = parseInt(document.getElementById("bilanganPelajar").value || 0);
+  if (!kategori || !sub || !dataKeluasan[kategori] || !dataKeluasan[kategori][sub] || bil <= 0) {
+    document.getElementById("jadualHasil").innerHTML = `<tr><td colspan="3">Sila pilih kategori, sub-kategori dan masukkan bilangan pelajar yang sah.</td></tr>`;
+    return;
+  }
+
+  const nilaiPejabatPaparan = document.getElementById("pilihanPejabat").value === "manual"
+    ? "-"
+    : 0.40;
+  const pejabatWarden = nilaiPejabatPaparan === "-" 
+    ? parseFloat(document.getElementById("inputPejabatManual").value || 0)
+    : 0.40 * bil;
+
+  const luasSeorang = dataKeluasan[kategori][sub];
+  const jumlahTidur = luasSeorang * bil;
+  const ruangRekreasi = 0.95 * bil;
+
+  let bilikAirPerPelajar = 0.40;
+  if (kategori === "2_orang") bilikAirPerPelajar = 1.35;
+  else if (kategori === "1_orang" && sub === "Pelajar") bilikAirPerPelajar = 2.70;
+  else if (kategori === "1_orang" && sub.includes("Pegawai")) bilikAirPerPelajar = 0.40;
+  const bilikAir = bilikAirPerPelajar * bil;
+
+  let ruangLegarPerPelajar = 1.40;
+  if (kategori === "8_12" || kategori === "8_12_min") ruangLegarPerPelajar = 1.65;
+  else if (kategori === "8_12_max" || kategori === "4_6") ruangLegarPerPelajar = 2.40;
+  else if (kategori === "2_orang" && sub === "Pelatih") ruangLegarPerPelajar = 3.35;
+  else if (kategori === "2_orang") ruangLegarPerPelajar = 2.95;
+  else if (kategori === "1_orang" && sub === "Pelajar") ruangLegarPerPelajar = 3.90;
+  else if (kategori === "1_orang" && sub === "Pegawai Gred 41-53") ruangLegarPerPelajar = 4.90;
+  else if (kategori === "1_orang" && sub === "Pegawai Gred 54 >") ruangLegarPerPelajar = 7.00;
+  const ruangLegar = ruangLegarPerPelajar * bil;
+
+  const includeDewanMakan = document.getElementById("includeDewanMakan").checked;
+  const includeDapur = document.getElementById("includeDapur").checked;
+
+  const dewanMakanPerPelajar = sub.includes("Pegawai") ? 1.20 : 0.95;
+  const dewanMakan = includeDewanMakan ? dewanMakanPerPelajar * bil : 0;
+
+  const dapurPerPelajar = bil <= 100 ? 0.75 : bil <= 400 ? 0.50 : 0.40;
+  const dapur = includeDapur ? dapurPerPelajar * bil : 0;
+
+  const jumlah = jumlahTidur + ruangRekreasi + bilikAir + ruangLegar + pejabatWarden + dewanMakan + dapur;
+
+  const isCustom = document.querySelector('input[name="tambahan"]:checked')?.value === 'custom';
+  const customVal = parseFloat(document.getElementById("customPercent").value || 0);
+  const percent = isCustom && customVal > 0 ? customVal : 35;
+  const extra = (percent / 100) * jumlah;
+  const totalAkhir = jumlah + extra;
+
+  document.querySelector("#hasilKira h3").textContent = `Jadual Keluasan Asrama: ${kategori} – ${sub}`;
+  document.getElementById("jadualHasil").innerHTML = `
+    <tr><td>Bilik Tidur</td><td>${luasSeorang.toFixed(2)}</td><td>${jumlahTidur.toFixed(2)}</td></tr>
+    <tr><td>Bilik Rekreasi / Rehat / Menggosok</td><td>0.95</td><td>${ruangRekreasi.toFixed(2)}</td></tr>
+    <tr><td>Bilik Air & Lain-lain</td><td>${bilikAirPerPelajar.toFixed(2)}</td><td>${bilikAir.toFixed(2)}</td></tr>
+    <tr><td>Ruang Legar</td><td>${ruangLegarPerPelajar.toFixed(2)}</td><td>${ruangLegar.toFixed(2)}</td></tr>
+    <tr><td>Pejabat (Warden & Penyelia)</td><td>${nilaiPejabatPaparan}</td><td>${pejabatWarden.toFixed(2)}</td></tr>
+    ${includeDewanMakan ? `<tr><td>Dewan Makan</td><td>${dewanMakanPerPelajar.toFixed(2)}</td><td>${dewanMakan.toFixed(2)}</td></tr>` : ""}
+    ${includeDapur ? `<tr><td>Dapur</td><td>${dapurPerPelajar.toFixed(2)}</td><td>${dapur.toFixed(2)}</td></tr>` : ""}
+    <tr><td>Tambahan Ruang Sirkulasi dan Servis (${percent}%)</td><td></td><td>${extra.toFixed(2)}</td></tr>
+    <tr><td><strong>Total Keseluruhan</strong></td><td></td><td><strong>${totalAkhir.toFixed(2)}</strong></td></tr>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  kemaskiniKategori();
+  document.querySelectorAll('input[name="tambahan"]').forEach(radio => {
+    radio.addEventListener("change", () => {
+      document.getElementById("customPercentGroup").style.display = radio.value === "custom" ? "block" : "none";
+      kiraKeluasan();
+    });
+  });
+});
+</script>
+</body>
+</html>
